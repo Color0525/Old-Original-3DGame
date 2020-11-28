@@ -1,4 +1,4 @@
-# Original-3DGame
+# Original-3DGame README
 
 ## ＜ゲーム制作Ⅰ第3ターム総合課題　提出物説明文＞
 

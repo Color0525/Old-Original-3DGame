@@ -22,6 +22,10 @@ public class HumanoidController : MonoBehaviour
 
     Animator m_anim = null;
     Rigidbody m_rb = null;
+
+    /// <summary>
+    /// 制御状態
+    /// </summary>
     bool m_stop = false;
 
     void Start()
@@ -117,6 +121,9 @@ public class HumanoidController : MonoBehaviour
         return isGrounded;
     }
 
+    /// <summary>
+    /// 制御を停止
+    /// </summary>
     public void StopControl()
     {
         m_stop = true;

@@ -7,12 +7,27 @@ public class BattleStatusController : MonoBehaviour
     [SerializeField] int m_nowLife = 10;
     [SerializeField] int m_power = 3;
 
+    public RectTransform m_nowLifeBer;
+
+    private void Start()
+    {
+        m_nowLifeBer = transform.Find("HPBarCanvas").transform.Find("NowLifeBar").GetComponent<RectTransform>();
+    }
+
+    /// <summary>
+    /// 攻撃する
+    /// </summary>
+    /// <param name="target"></param>
     public void Attack(BattleStatusController target)
     {
         Debug.Log(this.gameObject.name + " Attack");
         target.Damage(m_power);
     }
 
+    /// <summary>
+    /// ダメージを受ける
+    /// </summary>
+    /// <param name="power"></param>
     void Damage(int power)
     {
         m_nowLife = Mathf.Max(m_nowLife - power, 0);

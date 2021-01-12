@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MapEnemyController : MonoBehaviour
 {
@@ -9,19 +10,41 @@ public class MapEnemyController : MonoBehaviour
     /// <summary>ターンの速さ</summary>
     [SerializeField] float m_turnSpeed = 3f;
 
+    /// <summary>
+    /// 索敵コライダー
+    /// </summary>
     [SerializeField] SphereCollider m_discoverCollider;
+    /// <summary>
+    /// 索敵範囲
+    /// </summary>
     [SerializeField] float m_discoverDis = 10f;
+    /// <summary>
+    /// 動く最大時間
+    /// </summary>
     [SerializeField] float m_maxMoveTime = 5f;
+    /// <summary>
+    /// 止まる最大時間
+    /// </summary>
     [SerializeField] float m_maxStopTime = 5f;
 
     Vector3 m_dir = Vector3.zero;
-    Rigidbody m_rb = null;
+    Rigidbody m_rb;
+    NavMeshAgent m_nma;
+
+    /// <summary>
+    /// 制御状態
+    /// </summary>
     bool m_stop = false;
+    /// <summary>
+    /// 追尾状態
+    /// </summary>
+    bool m_chase = false;
 
     // Start is called before the first frame update
     void Start()
     {
         m_rb = GetComponent<Rigidbody>();
+        m_nma = GetComponent<NavMeshAgent>();
         m_discoverCollider.radius = m_discoverDis;
         StartCoroutine(SetMoveDir(m_maxMoveTime, m_maxStopTime));
     }
@@ -30,6 +53,10 @@ public class MapEnemyController : MonoBehaviour
     void Update()
     {
         if (m_stop)
+        {
+            return;
+        }
+        if (m_chase)
         {
             return;
         }
@@ -51,19 +78,51 @@ public class MapEnemyController : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Player")
         {
-            Vector3 playerPosition = other.transform.position;
-            playerPosition.y = this.transform.position.y;
-            this.transform.LookAt(playerPosition);
-
-            m_dir = other.transform.position - this.transform.position;
-            m_dir.y = m_rb.velocity.y;
+            m_chase = true;
         }
     }
 
+    /// <summary>
+    /// 索敵範囲内にplayerが侵入したとき追尾する
+    /// </summary>
+    /// <param name="other"></param>
+    private void OnTriggerStay(Collider other)
+    {
+        if (m_stop)
+        {
+            return;
+        }
+
+        if (other.gameObject.tag == "Player")
+        {
+            m_nma.SetDestination(other.gameObject.transform.position);
+
+
+            //Vector3 playerPosition = other.transform.position;
+            //playerPosition.y = this.transform.position.y;
+            //this.transform.LookAt(playerPosition);
+
+            //m_dir = other.transform.position - this.transform.position;
+            //m_dir.y = m_rb.velocity.y;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            m_chase = false;
+        }
+    }
+
+    /// <summary>
+    /// playerと接触時バトルシーンへ移行
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Player")
@@ -76,11 +135,20 @@ public class MapEnemyController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 制御停止
+    /// </summary>
     public void StopControl()
     {
         m_stop = true;
     }
 
+    /// <summary>
+    /// m_dirにランダム方向をランダム秒数で入れ、動く止まるを繰り返す
+    /// </summary>
+    /// <param name="maxMoveTime"></param>
+    /// <param name="maxStopTime"></param>
+    /// <returns></returns>
     IEnumerator SetMoveDir(float maxMoveTime, float maxStopTime)
     {
         while (true)
@@ -91,7 +159,10 @@ public class MapEnemyController : MonoBehaviour
             yield return new WaitForSeconds(Random.Range(0, maxStopTime));
         }
     }
-
+    /// <summary>
+    /// ランダムな平面方向を取得
+    /// </summary>
+    /// <returns></returns>
     Vector3 GetRandomDir()
     {
         float v = Random.Range(-1f, 1f);

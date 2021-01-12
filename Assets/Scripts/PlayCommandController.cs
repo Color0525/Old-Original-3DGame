@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class PlayCommandController : MonoBehaviour
 {
-    public BattlePlayerController m_bpc; 
+    /// <summary>
+    /// 行動者
+    /// </summary>
+    public BattlePlayerController m_actor; 
 
+    /// <summary>
+    /// コマンド使用
+    /// </summary>
     public void PlayCommand()
     {
-        m_bpc.AttackCommand();
+        m_actor.AttackCommand();
     }
 
 }

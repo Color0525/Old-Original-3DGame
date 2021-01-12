@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class BattleEnemyController : BattleUnitController
 {
+    /// <summary>
+    /// 行動(敵)
+    /// </summary>
     public override void StartAction()
     {
         base.StartAction();

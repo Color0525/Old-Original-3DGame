@@ -5,10 +5,22 @@ using UnityEngine;
 public class EnemyGenerater : MonoBehaviour
 {
     [SerializeField] GameObject m_mapEnemyPrefabs;
+    /// <summary>
+    /// 出現数
+    /// </summary>
     [SerializeField] int m_instanceNum = 3;
+    /// <summary>
+    /// 生成する四角範囲の大きさ
+    /// </summary>
     [SerializeField] float m_generateRange = 20f;
+    /// <summary>
+    /// プレイヤーとの最低距離
+    /// </summary>
     [SerializeField] float m_playerDis = 10f;
 
+    /// <summary>
+    /// 敵を生成
+    /// </summary>
     public void GenerateEnemy()
     {
         Vector3 generaterPos = transform.position;
